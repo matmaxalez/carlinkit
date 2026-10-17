@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg">
+
+    <LinearLayout
+        android:id="@+id/home"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingBottom="8dp">
+
+            <TextClock
+                android:id="@+id/clock"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:format12Hour="HH:mm"
+                android:format24Hour="HH:mm"
+                android:textColor="@color/text"
+                android:textSize="34sp" />
+
+            <Button
+                android:id="@+id/settings"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="56dp"
+                android:minWidth="56dp"
+                android:text="@string/settings"
+                android:textAllCaps="false"
+                android:textColor="@color/muted"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+        <GridView
+            android:id="@+id/home_grid"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:horizontalSpacing="12dp"
+            android:listSelector="@android:color/transparent"
+            android:overScrollMode="never"
+            android:stretchMode="columnWidth"
+            android:verticalSpacing="12dp" />
+
+        <TextView
+            android:id="@+id/home_empty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="@string/empty_home"
+            android:textColor="@color/muted"
+            android:textSize="18sp"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/drawer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/bg"
+        android:orientation="vertical"
+        android:padding="12dp"
+        android:visibility="gone">
+
+        <Button
+            android:id="@+id/drawer_back"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="56dp"
+            android:text="@string/back"
+            android:textAllCaps="false"
+            android:textColor="@color/accent"
+            android:textSize="20sp" />
+
+        <GridView
+            android:id="@+id/drawer_grid"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:fastScrollEnabled="true"
+            android:listSelector="@android:color/transparent"
+            android:overScrollMode="never"
+            android:stretchMode="columnWidth"
+            android:verticalSpacing="16dp" />
+    </LinearLayout>
+</FrameLayout>

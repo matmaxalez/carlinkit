@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Lekki Launcher</string>
+    <string name="all_apps">Aplikacje</string>
+    <string name="settings">Ustawienia</string>
+    <string name="back">Wróć</string>
+    <string name="empty_home">Brak kafli. Otwórz „Aplikacje” i przytrzymaj ikonę, aby dodać ją tutaj.</string>
+    <string name="cannot_open">Nie można uruchomić: %1$s</string>
+    <string name="move_left">Przesuń wcześniej</string>
+    <string name="move_right">Przesuń dalej</string>
+    <string name="remove_from_home">Usuń z ekranu głównego</string>
+    <string name="add_to_home">Dodaj do ekranu głównego</string>
+    <string name="app_info">Informacje o aplikacji</string>
+    <string name="uninstall">Odinstaluj</string>
+    <string name="tile_size">Rozmiar kafli: %1$s</string>
+    <string name="size_small">mały</string>
+    <string name="size_medium">średni</string>
+    <string name="size_large">duży</string>
+    <string name="labels_on">Podpisy pod ikonami: tak</string>
+    <string name="labels_off">Podpisy pod ikonami: nie</string>
+    <string name="startup_app">Uruchom po starcie: %1$s</string>
+    <string name="none">brak</string>
+    <string name="android_settings">Ustawienia Androida</string>
+    <string name="bluetooth_settings">Bluetooth</string>
+    <string name="wifi_settings">Wi-Fi</string>
+    <string name="home_settings">Wybierz domyślny launcher</string>
+    <string name="dev_settings">Opcje programisty (ADB)</string>
+    <string name="choose_startup">Aplikacja uruchamiana po włączeniu</string>
+</resources>
