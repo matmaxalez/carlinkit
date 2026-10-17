@@ -7,6 +7,6 @@ if "%~1"=="" (
   exit /b 1
 )
 adb push "%~dp0lekki.sh" "%~dp0pakiety.txt" /data/local/tmp/ || exit /b 1
-adb shell sh /data/local/tmp/lekki.sh %1
+adb shell sh /data/local/tmp/lekki.sh %1 %2
 if /i "%~1"=="raport" adb pull /sdcard/lekki "%~dp0raport-tbox"
 endlocal

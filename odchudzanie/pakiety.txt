@@ -29,14 +29,29 @@ com.android.music
 # com.google.android.googlequicksearchbox
 # com.google.android.apps.googleassistant
 
-# --- Carlinkit / producent: uzupełnione po analizie raportu z urządzenia ---
-# (patrz README – sekcja „Pakiety Carlinkita”)
+com.google.android.gms.location.history   # Historia lokalizacji (osobny pakiet)
+com.google.android.apps.turbo              # Device Health Services
+com.google.android.partnersetup
+com.android.protips
+
+# --- Dodatki producenta / zbędne aplikacje z firmware Carlinkita ---
+# Nazwy z bliźniaczych modeli (Tbox Ultra 2, Ambient, Plus). Czego nie ma
+# na Twoim Tboxie S, skrypt po prostu pominie.
+com.apkpure.aegon                          # sklep APKPure
+com.estrongs.android.pop                   # ES File Explorer
+com.chartcross.gpstestplus                 # GPS Test
+com.fibo.logviewer                         # podgląd logów
+com.quicinc.voice.activation               # wybudzanie głosem Qualcomm
+com.qualcomm.qti.voiceai.speech
+com.sd.ball                                # pływająca kulka (może się nie dać wyłączyć bez roota)
+# Ostrożnie / do sprawdzenia na Twoim egzemplarzu:
+# com.suding.datamanager                   # ekran aktywacji; na Ultra 2 usunięty bez problemu
+# com.google.android.apps.messaging        # SMS – zostaw, jeśli masz kartę SIM w Tboxie
 
 [tlo-ogranicz]
 # Aplikacje wideo/społecznościowe: nie mają czego robić w tle w aucie.
 # NIE dodawaj tu Waze, Map, Spotify ani YouTube Music (muszą grać/nawigować w tle).
 com.wbd.stream                             # HBO Max
-com.hbo.hbonow                             # starsze HBO Max
 com.netflix.mediaclient
 com.disney.disneyplus
 com.amazon.avod.thirdpartyclient           # Prime Video

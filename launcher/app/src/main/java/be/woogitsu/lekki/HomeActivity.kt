@@ -324,7 +324,6 @@ class HomeActivity : Activity() {
             "com.google.android.youtube",
             "com.google.android.apps.youtube.music",
             "com.wbd.stream",
-            "com.hbo.hbonow",
             "com.netflix.mediaclient",
             "com.android.vending",
         )

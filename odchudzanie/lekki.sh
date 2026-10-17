@@ -10,6 +10,7 @@
 #   kompiluj    – kompiluje AOT (dex2oat speed) aplikacje z sekcji [kompiluj]
 #   przywroc    – włącza z powrotem wszystko, co wyłączył ten skrypt
 #   turbo-on / turbo-off – tryb stałej wydajności (jeśli Power HAL obsługuje)
+#   home <pakiet/aktywnosc> – ustawia ekran główny (np. be.woogitsu.lekki/.HomeActivity)
 #
 # Wszystko jest odwracalne: pakiety są tylko wyłączane (pm disable-user),
 # nie odinstalowywane, a lista wyłączonych trafia do /sdcard/lekki/wylaczone.txt.
@@ -21,8 +22,9 @@ DISABLED="$OUT/wylaczone.txt"
 SETTINGS_BACKUP="$OUT/ustawienia-przed.txt"
 
 # Nigdy nie wyłączamy: rdzeń Androida, Google Play Services (Mapy, YouTube,
-# logowanie) i nic, co wygląda na mostek CarPlay/Android Auto Carlinkita.
-PROTECTED_RE='^(android|com\.android\.(systemui|settings|phone|shell|providers\..*|inputmethod\..*|bluetooth|networkstack.*|permissioncontroller|packageinstaller|webview|externalstorage|server\..*|location\..*|nfc|se|wifi\..*|connectivity\..*|media\..*|launcher3)|com\.google\.android\.(gms|gsf|webview|packageinstaller|permissioncontroller|ext\..*|networkstack.*|modulemetadata|trichromelibrary.*)|com\.android\.vending|com\.qualcomm\.qti\..*|vendor\..*)$'
+# logowanie), moduły APEX (ich wyłączenie dało bootloop na Tbox Ultra 2)
+# i usługi Carlinkita, które obsługują CarPlay/Android Auto, Bluetooth i ekran główny.
+PROTECTED_RE='^(android|com\.android\.(systemui|settings|phone|shell|providers\..*|inputmethod\..*|bluetooth|networkstack.*|permissioncontroller|packageinstaller|webview|externalstorage|server\..*|location\..*|nfc|se|wifi\..*|connectivity\..*|media\..*|launcher3|adservices.*|sdksandbox|federatedcompute.*|ondevicepersonalization.*)|com\.google\.android\.(gms|gsf|webview|packageinstaller|permissioncontroller|ext\..*|networkstack.*|modulemetadata|trichromelibrary.*|tts)|com\.android\.vending|com\.carsyso\..*|com\.suding\.(main|settings|speedplay|led|bluetooth)|carnetos\..*|com\.example\.car_launcher|vendor\..*)$'
 CARPLAY_RE='(carplay|carlink|autokit|zlink|zjinnova|androidauto|gearhead|projection|cplay|airplay|mfi|ecar|link)'
 
 say() { echo "[lekki] $*"; }
@@ -76,6 +78,7 @@ disable_pkg() {
     if echo "$p" | grep -qE "$PROTECTED_RE"; then say "POMIJAM (chroniony): $p"; return; fi
     if echo "$p" | grep -qiE "$CARPLAY_RE"; then say "POMIJAM (możliwy mostek CarPlay): $p"; return; fi
     pkg_installed "$p" || return
+    if pm path "$p" | grep -q '/apex/'; then say "POMIJAM (moduł APEX): $p"; return; fi
     if pm disable-user --user 0 "$p" >/dev/null 2>&1; then
         grep -qx "$p" "$DISABLED" 2>/dev/null || echo "$p" >> "$DISABLED"
         say "wyłączony: $p"
@@ -118,7 +121,8 @@ zastosuj() {
         say "ograniczone tło: $p"
     done
 
-    say "Gotowe. Zrestartuj Tboxa: adb reboot"
+    sync
+    say "Gotowe. Odczekaj 2 minuty, potem zrestartuj Tboxa: adb reboot"
 }
 
 kompiluj() {
@@ -156,7 +160,8 @@ przywroc() {
         rm "$SETTINGS_BACKUP"
         say "Ustawienia przywrócone."
     fi
-    say "Zrestartuj Tboxa: adb reboot"
+    sync
+    say "Odczekaj 2 minuty, potem zrestartuj Tboxa: adb reboot"
 }
 
 case "$1" in
@@ -165,6 +170,8 @@ case "$1" in
     kompiluj)  kompiluj ;;
     przywroc)  przywroc ;;
     turbo-on)  cmd power set-fixed-performance-mode-enabled true && say "Turbo włączone (obserwuj temperaturę!)" ;;
+    home)      [ -n "$2" ] || { say "Podaj komponent, listę znajdziesz w raport: launchery.txt"; exit 1; }
+               cmd package set-home-activity "$2" && say "Ekran główny: $2" ;;
     turbo-off) cmd power set-fixed-performance-mode-enabled false && say "Turbo wyłączone" ;;
-    *) echo "Użycie: sh $0 raport|zastosuj|kompiluj|przywroc|turbo-on|turbo-off"; exit 1 ;;
+    *) echo "Użycie: sh $0 raport|zastosuj|kompiluj|przywroc|turbo-on|turbo-off|home <komponent>"; exit 1 ;;
 esac
