@@ -89,6 +89,11 @@ lekki.cmd raport          (Windows)
 ```
 Raport ląduje w `odchudzanie/raport-tbox/`. **Prześlij mi ten folder.**
 Najważniejsze są `pakiety-*.txt`, `top.txt`, `meminfo.txt` i `carplay-kandydaci.txt`.
+Raport zawiera też folder `klucze/`. Na jego podstawie sprawdzę, czy Carlinkit
+podpisał firmware publicznym kluczem testowym AOSP. Jeśli tak, da się zrobić
+własny, odchudzony firmware `update.zip` do wgrania z karty microSD
+(szczegóły: [docs/ROM-analiza.md](docs/ROM-analiza.md), punkt 2a).
+
 Na tej podstawie dopiszę do `pakiety.txt` dokładnie te aplikacje Carlinkita,
 które są zbędne na Twoim egzemplarzu. Obecna lista bazuje na bliźniaczych
 modelach (Ultra 2, Ambient, Plus) oraz na typowych dodatkach Google.

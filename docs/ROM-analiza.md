@@ -33,7 +33,8 @@ Stan wiedzy: 17.10.2026. Wynik przeszukania GitHuba, strony Carlinkita, XDA
   z karty microSD (FAT32).
   - Według użytkowników XDA w środku są `payload.bin`, `boot.img` i `init_boot.img`,
     czyli typowy pakiet A/B.
-  - Paczki są podpisane, więc zmodyfikowanej nie da się wgrać tą drogą.
+  - Paczki są podpisane. Zmodyfikowaną przyjmie Tbox tylko wtedy, gdy podpiszemy
+    ją kluczem, któremu ufa (patrz punkt 2a).
 - **Root, opisany dla innych modeli** (fragmenty z XDA):
   1. Wyciągasz `boot`/`init_boot` z firmware.
   2. Łatasz je Magiskiem.
@@ -43,6 +44,41 @@ Stan wiedzy: 17.10.2026. Wynik przeszukania GitHuba, strony Carlinkita, XDA
   fastboot, loadera firehose do EDL ani roota.
   - Przypuszczenie: na Ultra 2 zadziałał ogólny loader SM6350 od innego producenta,
     więc podobnie może być z SM6115. Nikt tego nie sprawdził.
+
+## 2a. Kluczowy test: czy Carlinkit użył publicznych kluczy testowych AOSP
+
+Plan „rozpakuj oryginalny firmware → usuń zbędne → złóż → wgraj z microSD”
+(proponowany też przez ChatGPT) ma dwie bramki. GPT o nich nie wspomniał:
+
+1. **Podpis `update.zip`.** Recovery sprawdza paczkę kluczami z
+   `/system/etc/security/otacerts.zip`. Jeśli to prywatny klucz Carlinkita,
+   własnej paczki nie podpiszemy.
+2. **AVB / dm-verity.** Zmieniony `system`/`product` musi mieć nowy hash
+   w `vbmeta`, podpisany kluczem, który zna bootloader. Przy zablokowanym
+   bootloaderze i prywatnym kluczu Tbox się nie uruchomi.
+
+**Dlaczego jest nadzieja:** firmware Tbox Ambient (Android 13) był podpisany
+**publicznym kluczem testowym AOSP**
+([AmbientDock](https://github.com/riveerxd/AmbientDock)). Tanie chińskie
+firmware często używa też testowych kluczy AVB z `external/avb/test/data`.
+Jeśli tak jest w Tbox S, obie bramki da się przejść naszym podpisem
+i nie trzeba trybu EDL ani rozkręcania.
+
+**Jak sprawdzamy (zero ryzyka, sam odczyt):**
+1. `lekki.cmd raport` kopiuje `otacerts.zip`, `framework-res.apk` i właściwości
+   bootloadera do `raport-tbox/klucze/`.
+2. `python3 narzedzia/sprawdz_klucze.py odchudzanie/raport-tbox/klucze` porównuje
+   je z kluczami AOSP:
+   - `testkey`: SHA-256 `a40da80a…f5dc`
+   - `platform`: SHA-256 `c8a2e9bc…2ab8`
+3. Wynik:
+   - **klucz AOSP w otacerts** → własny `update.zip` jest wykonalny.
+     Potrzebny jeszcze oryginalny firmware Tbox S (od Carlinkita) jako baza.
+   - **klucz prywatny** → zostaje tylko odchudzanie przez ADB albo root przez EDL.
+   - `ro.boot.verifiedbootstate=orange` → bootloader odblokowany, AVB nie
+     blokuje zmienionych obrazów. `green` → zablokowany. Wtedy decyduje,
+     czy `vbmeta` w firmware jest podpisany kluczem testowym AVB, co sprawdzimy
+     `avbtool info_image` na pliku z paczki.
 
 ## 3. Dlaczego czysty Android wyłączyłby obraz w aucie
 
@@ -61,6 +97,7 @@ Stan wiedzy: 17.10.2026. Wynik przeszukania GitHuba, strony Carlinkita, XDA
 | Droga | Ryzyko | Efekt | Rekomendacja |
 |---|---|---|---|
 | Odchudzenie przez ADB (`odchudzanie/`) | niskie, odwracalne | mniej procesów i RAM, brak animacji, AOT | **zrobić teraz** |
+| Własny `update.zip` na bazie oryginału (jeśli klucze testowe AOSP) | średnie (mamy oryginał do powrotu) | prawdziwie lżejszy system, bez zbędnych aplikacji na partycjach | **sprawdzić klucze teraz**, realizować po zdobyciu firmware S |
 | Root Magisk przez EDL/QFIL + moduł usuwający aplikacje systemowe | wysokie (kasuje dane, możliwa cegła) | system „lżejszy” na poziomie partycji, pełna kontrola | ewentualnie później, gdy będą firmware S i działający loader EDL |
 | Własny ROM / GSI | ogromne | najpewniej koniec CarPlay w aucie | **nie robić** |
 

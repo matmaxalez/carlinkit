@@ -68,6 +68,13 @@ raport() {
     settings list system > "$OUT/settings-system.txt"
     device_config list > "$OUT/device_config.txt" 2>&1
     top -b -n 1 -m 40 > "$OUT/top.txt" 2>&1
+    # Klucze: czy da się podpisać własną paczkę update.zip (patrz docs/ROM-analiza.md).
+    mkdir -p "$OUT/klucze"
+    for f in /system/etc/security/otacerts.zip /product/etc/security/otacerts.zip \
+             /vendor/etc/security/otacerts.zip /system/framework/framework-res.apk; do
+        [ -r "$f" ] && cp "$f" "$OUT/klucze/$(echo "$f" | tr '/' '_' | sed 's/^_//')"
+    done
+    getprop | grep -E 'ro\.(build\.(tags|type|fingerprint|version\.security_patch)|boot\.(verifiedbootstate|vbmeta\.|flash\.locked|veritymode|slot_suffix|dynamic_partitions)|oem_unlock_supported|product\.(board|device|model|name))|sys\.oem_unlock_allowed' > "$OUT/klucze/bezpieczenstwo.txt"
     # Kandydaci na mostek CarPlay – tego NIE ruszamy, ale chcemy wiedzieć, co to jest.
     pm list packages | sed 's/^package://' | grep -iE "$CARPLAY_RE" > "$OUT/carplay-kandydaci.txt"
     say "Gotowe. Ściągnij: adb pull $OUT"
