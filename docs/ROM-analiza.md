@@ -1,8 +1,82 @@
-# Własny / czysty ROM dla Carlinkit Tbox S: analiza
+# Własny / lżejszy firmware dla Carlinkit Tbox S: analiza
 
-Stan wiedzy: 17.10.2026. Wynik przeszukania GitHuba, strony Carlinkita, XDA
-(tylko fragmenty z wyszukiwarki, bo XDA blokuje pobieranie) i forów samochodowych.
-**Potwierdzone** = źródło przeczytane, **przypuszczenie** = wniosek bez twardego dowodu.
+Stan wiedzy: 17.10.2026, po trzech rundach wyszukiwania (Sonnet + 2× Opus) i własnej weryfikacji.
+**Potwierdzone** = źródło otwarte i sprawdzone, **przypuszczenie** = wniosek bez twardego dowodu.
+
+## 0. Najważniejsze ustalenia (runda 2)
+
+1. **Firmware Carlinkita robi chiński producent Suding** (Shenzhen Suding Technology,
+   marka SDK: Carsyso). Ten sam firmware trafia też do Atoto i innych marek.
+   „chelianyi” (车连易) to w firmware kod klienta Carlinkit.
+   **Potwierdzone** w zrzucie firmware i w publikacji z punktu 3.
+2. **Istnieją publiczne zrzuty firmware bliźniaczych Tboxów**
+   na [dumps.tadiphone.dev](https://dumps.tadiphone.dev).
+   - Każdy zrzut ma rozpakowane partycje system/vendor/product, `boot.img`
+     i `init_boot.img`.
+   - Lista zrzutów:
+     - [qti/bengal_515](https://dumps.tadiphone.dev/dumps/qti/bengal_515): AutoKit Ambient, Android 13. Najbliższy krewny.
+     - [qti/bengal](https://dumps.tadiphone.dev/dumps/qti/bengal): Tbox Mini.
+     - [qti/sdm660_64](https://dumps.tadiphone.dev/dumps/qti/sdm660_64): Ambient 660.
+     - [doro/qcm6125](https://dumps.tadiphone.dev/dumps/doro/qcm6125) i [doro/dsb0230](https://dumps.tadiphone.dev/dumps/doro/dsb0230): Tbox Plus.
+   - **Zrzutu samego Tbox S (X8) nie ma nigdzie.**
+3. **Sam sprawdziłem zrzut Ambient (Android 13):**
+   - `otacerts.zip` zawiera **publiczny klucz testowy AOSP** (SHA-256 `a40da80a…f5dc`).
+     Tbox Ambient przyjmie więc `update.zip` podpisany publicznym kluczem, czyli
+     paczkę zrobioną przez nas. Build jest oznaczony `test-keys`.
+   - W firmware jest setuidowy plik `/system/xbin/sdsu` (oraz `sdsu_no`).
+   - Usługi startowane przez producenta (`/system/etc/main/load_services.json`):
+     - `com.suding.speedplay`: **mostek CarPlay/Android Auto**;
+     - `com.carsyso.mainui`;
+     - `carnetos.usbmedia`;
+     - `com.sd.ball`: pływająca kulka;
+     - `com.suding.screendot`;
+     - `com.suding.datamanager`: „ReportDataService”, czyli wysyłanie danych.
+   - Dokładne nazwy pakietów wszystkich dodatków producenta są w `odchudzanie/pakiety.txt`.
+4. **Publikacja o urządzeniu z identycznym buildem jak Twój.**
+   [The Machine in the Middle](https://github.com/jpuckett11/The-Machine-in-the-Middle)
+   (J. Puckett, 1.09.2026) opisuje box Atoto CB6 z buildem `TKQ1.230627.001`,
+   firmware Suding i procesorem SM6115. Autor podaje:
+   - `ro.adb.secure=0` oraz root przez `sdsu` („adb shell, su, pełny root”);
+   - brak zabezpieczeń OEM w procesorze (OEM_ID=0);
+   - podpis kluczami testowymi AOSP;
+   - działający tryb EDL.
+
+   Procedur i zrzutów nie opublikował. To jedno, niezrecenzowane źródło.
+5. **Loader EDL pasujący do tego buildu jest publiczny.** W [bkerler/Loaders](https://github.com/bkerler/Loaders) leży
+   `qualcomm/factory/sdm662/0014d0e100000000_d40eee56f3194665_FHPRG.bin`.
+   Jego HWID i PK_HASH zgadzają się z tym, co publikacja zalogowała na tym buildzie.
+   Przypuszczenie: zadziała też na Tbox S, co pozwoliłoby zrobić pełną kopię zapasową.
+6. **FCC:** wniosek Carlinkita [2BKBF-AMBIENT](https://fccid.io/2BKBF-AMBIENT/Letter/FCC-Declaration-on-Model-Differences-7697462)
+   wymienia Tbox S1 i S2 jako ten sam projekt płytki co Ambient.
+7. **„Wolny kod”, który mógł znaleźć GPT.** Najpewniej jedno z trzech:
+   - Ogólnodostępny kod Qualcomma dla tego procesora: kernel 4.19 „bengal”
+     na [CodeLinaro](https://git.codelinaro.org/clo/la/kernel/msm-4.19),
+     tag `LA.UM.9.15.2.*-KAMORTA.QSSI13*`.
+   - Kernele LineageOS dla innych urządzeń z SM6115, np.
+     [android_kernel_fxtec_sm6115](https://github.com/LineageOS/android_kernel_fxtec_sm6115).
+   - Repozytoria donglów Carlinkit (inny sprzęt).
+
+   To jest kod **procesora**, nie Tboxa. Nie ma w nim konfiguracji płytki Carlinkita
+   ani mostka CarPlay, więc nie da się z niego zbudować działającego systemu dla Tboxa.
+
+### Co to zmienia
+
+Nadal **nie ma kodu źródłowego Tboxa**. Ale realna jest droga, którą proponował GPT:
+**odchudzony firmware na bazie oryginału**. Prawdopodobnie da się to zrobić nawet
+bez flashowania przez EDL:
+
+1. `lekki.cmd raport` sprawdzi trzy rzeczy:
+   - czy Twój `otacerts.zip` to klucz AOSP;
+   - czy masz `/system/xbin/sdsu`;
+   - czy `ro.adb.secure=0`.
+2. Jeśli jest `sdsu` (root): kopia zapasowa **wszystkich partycji** przez `dd` na kartę lub komputer.
+   To będzie Twoja prywatna kopia zapasowa Tbox S. Bez niej nie ruszamy dalej.
+3. Z tej kopii budujemy lżejszy system: usunięcie aplikacji z partycji `system/product/vendor`
+   (albo bezpieczniej: moduł Magiska, który je „ukrywa”), zostawiając SpeedPlay i usługi Suding.
+4. Wgranie: przez `update.zip` podpisany kluczem testowym (jeśli `otacerts` = AOSP) albo przez
+   root. Zablokowany bootloader i AVB sprawdzimy w raporcie (`verifiedbootstate`).
+
+---
 
 ## 1. Otwarty kod źródłowy: brak
 
@@ -97,7 +171,7 @@ i nie trzeba trybu EDL ani rozkręcania.
 | Droga | Ryzyko | Efekt | Rekomendacja |
 |---|---|---|---|
 | Odchudzenie przez ADB (`odchudzanie/`) | niskie, odwracalne | mniej procesów i RAM, brak animacji, AOT | **zrobić teraz** |
-| Własny `update.zip` na bazie oryginału (jeśli klucze testowe AOSP) | średnie (mamy oryginał do powrotu) | prawdziwie lżejszy system, bez zbędnych aplikacji na partycjach | **sprawdzić klucze teraz**, realizować po zdobyciu firmware S |
+| Własny `update.zip` / root `sdsu` na bazie oryginału | średnie (po pełnej kopii partycji) | prawdziwie lżejszy system, bez zbędnych aplikacji na partycjach | **sprawdzić raportem teraz**; bliźniaczy firmware ma klucz AOSP i `sdsu` |
 | Root Magisk przez EDL/QFIL + moduł usuwający aplikacje systemowe | wysokie (kasuje dane, możliwa cegła) | system „lżejszy” na poziomie partycji, pełna kontrola | ewentualnie później, gdy będą firmware S i działający loader EDL |
 | Własny ROM / GSI | ogromne | najpewniej koniec CarPlay w aucie | **nie robić** |
 
@@ -118,6 +192,13 @@ Kolejność, bez pomijania kroków:
 5. Nigdy nie mieszać wariantów (EAU ≠ EM).
 
 ## Źródła
+
+- https://dumps.tadiphone.dev/dumps/qti/bengal_515 (zrzut Ambient A13, sprawdzony)
+- https://github.com/jpuckett11/The-Machine-in-the-Middle
+- https://github.com/bkerler/Loaders, https://github.com/bkerler/edl
+- https://fccid.io/2BKBF-AMBIENT
+- https://git.codelinaro.org/clo/la/kernel/msm-4.19
+- https://github.com/LineageOS/android_kernel_fxtec_sm6115
 
 - https://www.carlinkit.com/s2
 - https://www.carlinkit.com/download.html

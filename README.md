@@ -4,26 +4,24 @@ Cel: żeby Carlinkit Tbox S (EAU, 4/64 GB, Android 13, Qualcomm SM6115, Adreno 6
 działał płynnie w Volvo XC60 2024 i XC40 2021 i bez zbędnych dodatków uruchamiał
 Waze, Mapy Google, Spotify, YouTube, HBO Max itp.
 
-## Najpierw ważne: czy da się wgrać „czysty Android”?
+## Najpierw ważne: czy da się zrobić lżejszy firmware?
 
-**Nie da się tego zrobić bezpiecznie i tak, żeby Tbox dalej działał w aucie.** Szczegóły i źródła są w [docs/ROM-analiza.md](docs/ROM-analiza.md). W skrócie:
+Szczegóły i źródła: [docs/ROM-analiza.md](docs/ROM-analiza.md).
 
-1. **Nie ma otwartego kodu źródłowego tego firmware.** Carlinkit nie opublikował
-   źródeł kernela, drzewa urządzenia ani niczego, z czego da się zbudować ROM.
-   Nie istnieje też żaden LineageOS/GSI dla żadnego Tboxa. Jedyne repo
-   „device_carlinkit_cpc200tbox” na GitHubie jest puste.
-2. **Obraz w Volvo robi zamknięty stos Carlinkita.** Tbox udaje iPhone'a z CarPlay:
-   natywny proces producenta przejmuje port USB już przy starcie, koduje ekran do
-   H.264 i wysyła go do auta. Prawdopodobnie korzysta też z chipu
-   autoryzacji Apple MFi. Czysty Android (GSI/LineageOS) tego nie ma, więc
-   **po wgraniu Tbox przestałby się wyświetlać w Volvo**.
-3. Firmware dla Tbox S nie jest publicznie dostępny (na carlinkit.com są inne modele).
-   Nikt nie opisał też odblokowania bootloadera ani roota dla wersji SM6115.
+- **Kodu źródłowego Tboxa nie ma.** Carlinkit i jego faktyczny producent (Suding)
+  nie opublikowali źródeł, a „czysty Android” zbudowany z ogólnego kodu Qualcomma
+  nie miałby mostka CarPlay. **Tbox przestałby się wtedy wyświetlać w Volvo.**
+- **Ale da się odchudzić oryginalny firmware, i to bardzo możliwe, że bez flashowania przez EDL:**
+  - bliźniaczy firmware Carlinkita (Tbox Ambient, Android 13) jest podpisany
+    **publicznym kluczem testowym AOSP**, a sprawdziłem to sam w publicznym zrzucie;
+  - publikacja o urządzeniu z **identycznym buildem jak Twój** (`TKQ1.230627.001`)
+    opisuje wbudowany root (`sdsu`);
+  - raport z Twojego Tboxa potwierdzi, czy u Ciebie jest tak samo.
 
-Da się natomiast **odchudzić fabryczny system bez roota i w pełni odwracalnie**.
-To daje praktycznie to samo, co „lekki Android”: mniej procesów w tle,
-więcej wolnego RAM, brak animacji i szybszy start aplikacji. Tym zajmuje się
-to repo.
+Kolejność:
+1. **Krok bezpieczny (teraz):** odchudzenie przez ADB. Nic nie kasuje i jest w pełni odwracalne.
+2. **Raport:** sprawdza klucze, root i bootloader.
+3. **Jeśli raport jest pomyślny:** pełna kopia partycji, potem prawdziwie lżejszy firmware na bazie oryginału.
 
 ## Co jest w repo
 

@@ -34,19 +34,36 @@ com.google.android.apps.turbo              # Device Health Services
 com.google.android.partnersetup
 com.android.protips
 
-# --- Dodatki producenta / zbędne aplikacje z firmware Carlinkita ---
-# Nazwy z bliźniaczych modeli (Tbox Ultra 2, Ambient, Plus). Czego nie ma
-# na Twoim Tboxie S, skrypt po prostu pominie.
-com.apkpure.aegon                          # sklep APKPure
-com.estrongs.android.pop                   # ES File Explorer
-com.chartcross.gpstestplus                 # GPS Test
-com.fibo.logviewer                         # podgląd logów
+# --- Dodatki producenta (Suding = faktyczny producent firmware Carlinkita) ---
+# Nazwy pakietów odczytane z publicznego zrzutu firmware bliźniaczego
+# Tbox Ambient, Android 13 (dumps.tadiphone.dev/dumps/qti/bengal_515).
+# Czego nie ma na Twoim Tboxie S, skrypt pominie.
+com.meigsmart.meigrs32                     # CITTest – test fabryczny modułu MeiG
+com.suding.factorytest                     # test fabryczny Suding
+com.meig.logger                            # logger modułu MeiG (zapisuje logi w tle)
+com.qualcomm.qti.logkit.lite               # logger Qualcomm
 com.quicinc.voice.activation               # wybudzanie głosem Qualcomm
 com.qualcomm.qti.voiceai.speech
+com.suding.datamanager                     # „ReportDataService” – wysyłanie danych do producenta
+com.estrongs.android.pop                   # ES File Explorer (preinstalowany)
+com.chartcross.gpstestplus                 # GPS Test (preinstalowany)
+net.easyconn                               # EasyConnect – chińskie lustro telefonu
+com.apkpure.aegon                          # sklep APKPure
+com.fibo.logviewer                         # podgląd logów
 com.sd.ball                                # pływająca kulka (może się nie dać wyłączyć bez roota)
-# Ostrożnie / do sprawdzenia na Twoim egzemplarzu:
-# com.suding.datamanager                   # ekran aktywacji; na Ultra 2 usunięty bez problemu
+# Do decyzji – odkomentuj, jeśli nie używasz:
+# com.suding.ota                           # aktualizacje Carlinkita (wyłączone = brak OTA)
+# com.abupdate.fota_demo_iot               # drugi klient aktualizacji (Adups/Abupdate)
+# org.videolan.vlc                         # VLC (preinstalowany)
+# com.ublox.ucenter                        # narzędzie GPS u-blox
+# com.suding.onstepbtmusic                 # skrót „muzyka BT jednym dotknięciem”
+# com.ds.backcar                           # skrót „powrót do auta”
+# com.suding.led                           # sterowanie podświetleniem LED (Tbox S chyba nie ma LED)
 # com.google.android.apps.messaging        # SMS – zostaw, jeśli masz kartę SIM w Tboxie
+# NIE RUSZAĆ (skrypt i tak je chroni): com.suding.speedplay (CarPlay/AA),
+# com.carsyso.main, com.carsyso.mainui, com.carsyso.bluetooth, carnetos.usbmedia,
+# com.suding.settings, com.suding.screendot, com.suding.apkinstaller,
+# com.sd.factoryconfig, com.android.launcher3 (fabryczny ekran główny).
 
 [tlo-ogranicz]
 # Aplikacje wideo/społecznościowe: nie mają czego robić w tle w aucie.

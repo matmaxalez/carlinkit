@@ -24,7 +24,7 @@ SETTINGS_BACKUP="$OUT/ustawienia-przed.txt"
 # Nigdy nie wyłączamy: rdzeń Androida, Google Play Services (Mapy, YouTube,
 # logowanie), moduły APEX (ich wyłączenie dało bootloop na Tbox Ultra 2)
 # i usługi Carlinkita, które obsługują CarPlay/Android Auto, Bluetooth i ekran główny.
-PROTECTED_RE='^(android|com\.android\.(systemui|settings|phone|shell|providers\..*|inputmethod\..*|bluetooth|networkstack.*|permissioncontroller|packageinstaller|webview|externalstorage|server\..*|location\..*|nfc|se|wifi\..*|connectivity\..*|media\..*|launcher3|adservices.*|sdksandbox|federatedcompute.*|ondevicepersonalization.*)|com\.google\.android\.(gms|gsf|webview|packageinstaller|permissioncontroller|ext\..*|networkstack.*|modulemetadata|trichromelibrary.*|tts)|com\.android\.vending|com\.carsyso\..*|com\.suding\.(main|settings|speedplay|led|bluetooth)|carnetos\..*|com\.example\.car_launcher|vendor\..*)$'
+PROTECTED_RE='^(android|com\.android\.(systemui|settings|phone|shell|providers\..*|inputmethod\..*|bluetooth|networkstack.*|permissioncontroller|packageinstaller|webview|externalstorage|server\..*|location\..*|nfc|se|wifi\..*|connectivity\..*|media\..*|launcher3|adservices.*|sdksandbox|federatedcompute.*|ondevicepersonalization.*)|com\.google\.android\.(gms|gsf|webview|packageinstaller|permissioncontroller|ext\..*|networkstack.*|modulemetadata|trichromelibrary.*|tts)|com\.android\.vending|com\.carsyso\..*|com\.suding\.(main|settings|speedplay|screendot|apkinstaller|bluetooth)|com\.sd\.factoryconfig|com\.qualcomm\.qti\.(performancemode|workloadclassifier)|carnetos\..*|com\.example\.car_launcher|vendor\..*)$'
 CARPLAY_RE='(carplay|carlink|autokit|zlink|zjinnova|androidauto|gearhead|projection|cplay|airplay|mfi|ecar|link)'
 
 say() { echo "[lekki] $*"; }
@@ -74,7 +74,10 @@ raport() {
              /vendor/etc/security/otacerts.zip /system/framework/framework-res.apk; do
         [ -r "$f" ] && cp "$f" "$OUT/klucze/$(echo "$f" | tr '/' '_' | sed 's/^_//')"
     done
-    getprop | grep -E 'ro\.(build\.(tags|type|fingerprint|version\.security_patch)|boot\.(verifiedbootstate|vbmeta\.|flash\.locked|veritymode|slot_suffix|dynamic_partitions)|oem_unlock_supported|product\.(board|device|model|name))|sys\.oem_unlock_allowed' > "$OUT/klucze/bezpieczenstwo.txt"
+    getprop | grep -E 'ro\.(build\.(tags|type|fingerprint|version\.security_patch)|boot\.(verifiedbootstate|vbmeta\.|flash\.locked|veritymode|slot_suffix|dynamic_partitions)|oem_unlock_supported|product\.(board|device|model|name)|adb\.secure|debuggable|secure|build\.oem\.name|fota\..*|boot\.oem\..*)|sys\.oem_unlock_allowed|persist\.sys\.oem\..*|quectel|meig|fibocom' > "$OUT/klucze/bezpieczenstwo.txt"
+    # Publikacja o tym samym buildzie (Atoto CB6): setuidowy „sdsu” = root bez flashowania.
+    ls -l /system/xbin/ > "$OUT/klucze/xbin.txt" 2>&1
+    cat /proc/device-tree/model > "$OUT/klucze/dt-model.txt" 2>&1
     # Kandydaci na mostek CarPlay – tego NIE ruszamy, ale chcemy wiedzieć, co to jest.
     pm list packages | sed 's/^package://' | grep -iE "$CARPLAY_RE" > "$OUT/carplay-kandydaci.txt"
     say "Gotowe. Ściągnij: adb pull $OUT"
