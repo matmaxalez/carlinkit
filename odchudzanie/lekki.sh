@@ -23,7 +23,7 @@ SETTINGS_BACKUP="$OUT/ustawienia-przed.txt"
 # Nigdy nie wyłączamy: rdzeń Androida, Google Play Services (Mapy, YouTube,
 # logowanie) i nic, co wygląda na mostek CarPlay/Android Auto Carlinkita.
 PROTECTED_RE='^(android|com\.android\.(systemui|settings|phone|shell|providers\..*|inputmethod\..*|bluetooth|networkstack.*|permissioncontroller|packageinstaller|webview|externalstorage|server\..*|location\..*|nfc|se|wifi\..*|connectivity\..*|media\..*|launcher3)|com\.google\.android\.(gms|gsf|webview|packageinstaller|permissioncontroller|ext\..*|networkstack.*|modulemetadata|trichromelibrary.*)|com\.android\.vending|com\.qualcomm\.qti\..*|vendor\..*)$'
-CARPLAY_RE='(carplay|carlink|autokit|zlink|zjinnova|androidauto|cplay|airplay|mfi|ecar|link)'
+CARPLAY_RE='(carplay|carlink|autokit|zlink|zjinnova|androidauto|gearhead|projection|cplay|airplay|mfi|ecar|link)'
 
 say() { echo "[lekki] $*"; }
 

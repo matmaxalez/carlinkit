@@ -1,0 +1,56 @@
+# Lista dla lekki.sh. Jedna nazwa pakietu w linii, # = komentarz.
+# Skrypt pomija pakiety, których nie ma, oraz wszystko, co wygląda na mostek
+# CarPlay/Android Auto albo rdzeń Androida/Google Play Services.
+# Każdy wpis jest odwracalny poleceniem: lekki.sh przywroc
+
+[wylacz]
+# --- Google / AOSP: zbędne w aucie, działają w tle albo zajmują RAM ---
+com.google.android.apps.wellbeing          # Cyfrowa równowaga (usługa w tle)
+com.google.android.apps.photos             # Zdjęcia Google (synchronizacja w tle)
+com.google.android.gm                      # Gmail
+com.google.android.apps.docs               # Dysk Google
+com.google.android.videos                  # Google TV / Filmy Play
+com.google.android.apps.tachyon            # Google Meet
+com.google.android.apps.restore            # Przywracanie danych (tylko przy pierwszej konfiguracji)
+com.google.android.feedback                # Zgłaszanie opinii
+com.google.android.printservice.recommendation
+com.android.printspooler                   # Drukowanie
+com.android.bips                           # Wbudowana usługa druku
+com.android.dreams.basic                   # Wygaszacz ekranu
+com.android.dreams.phototable
+com.android.wallpaper.livepicker           # Tapety na żywo
+com.android.egg                            # Easter egg Androida
+com.android.traceur                        # Śledzenie systemu (narzędzie deweloperskie)
+com.android.email
+com.android.calendar
+com.android.gallery3d
+com.android.music
+# Opcjonalnie (odkomentuj, jeśli nie używasz Gemini/Asystenta – aplikacja Google jest ciężka):
+# com.google.android.googlequicksearchbox
+# com.google.android.apps.googleassistant
+
+# --- Carlinkit / producent: uzupełnione po analizie raportu z urządzenia ---
+# (patrz README – sekcja „Pakiety Carlinkita”)
+
+[tlo-ogranicz]
+# Aplikacje wideo/społecznościowe: nie mają czego robić w tle w aucie.
+# NIE dodawaj tu Waze, Map, Spotify ani YouTube Music (muszą grać/nawigować w tle).
+com.wbd.stream                             # HBO Max
+com.hbo.hbonow                             # starsze HBO Max
+com.netflix.mediaclient
+com.disney.disneyplus
+com.amazon.avod.thirdpartyclient           # Prime Video
+com.facebook.katana
+com.instagram.android
+com.zhiliaoapp.musically                   # TikTok
+
+[kompiluj]
+# Pełna kompilacja AOT = szybszy start i mniej szarpania na SM6115.
+com.waze
+com.google.android.apps.maps
+com.spotify.music
+com.google.android.youtube
+com.google.android.apps.youtube.music
+com.wbd.stream
+com.netflix.mediaclient
+be.woogitsu.lekki
